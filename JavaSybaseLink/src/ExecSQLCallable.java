@@ -1,8 +1,9 @@
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.Statement;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.concurrent.Callable;
 import java.text.DateFormat;
@@ -33,6 +34,13 @@ public class ExecSQLCallable implements Callable<String> {
 		//safePrintln(result);
 		return result;
 	}
+        
+        public void fillParameters(PreparedStatement stmt, Object[] parameters) throws SQLException {
+            int i = 1;
+            for (Object o : parameters) {
+                stmt.setObject(i++, o);
+            }
+        }
 
 	public String execSQLJsonSimple()
 	{
@@ -42,8 +50,9 @@ public class ExecSQLCallable implements Callable<String> {
 		response.put("result", rss);
 
 		try {
-			Statement stmt = conn.createStatement();
-			boolean isRS = stmt.execute(request.sql);
+			PreparedStatement stmt = conn.prepareStatement(request.sql);
+                        fillParameters(stmt, request.parameters);
+			boolean isRS = stmt.execute();
 			while (isRS || (stmt.getUpdateCount() != -1))
 			{
 				if (!isRS)

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
 
@@ -42,6 +43,7 @@ public class StdInputReader {
 			request = new SQLRequest();
 			request.msgId = (Integer)val.get("msgId");
 			request.sql = (String)val.get("sql");
+                        request.parameters = ((JSONArray)val.get("parameters")).toArray();
 			request.javaStartTime = startTime;
 		} catch (Exception e)
 		{
